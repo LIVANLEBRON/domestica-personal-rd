@@ -97,14 +97,14 @@ export default function Employees() {
                                             <td data-label="Traslado" className="text-sm">{trasladoLabels[e.traslado] || '—'}</td>
                                             <td data-label="Estado"><span className={`badge badge-${e.estado === 'activo' ? 'active' : e.estado === 'pendiente' ? 'pending' : 'blocked'}`}>{e.estado}</span></td>
                                             <td data-label="Acciones">
-                                                <div className="flex gap-2">
+                                                <div className="flex gap-2" style={{ flexWrap: 'wrap' }}>
                                                     {e.estado === 'pendiente' && <>
-                                                        <button className="btn btn-success btn-sm" onClick={() => changeStatus(e.id, 'activo')}>Aprobar</button>
-                                                        <button className="btn btn-danger btn-sm" onClick={() => changeStatus(e.id, 'bloqueado')}>Rechazar</button>
+                                                        <button className="btn btn-success btn-sm" onClick={() => changeStatus(e.id, 'activo')}>✅ Aprobar</button>
+                                                        <button className="btn btn-danger btn-sm" onClick={() => changeStatus(e.id, 'bloqueado')}>❌ Rechazar</button>
                                                     </>}
-                                                    {e.estado === 'activo' && <button className="btn btn-danger btn-sm" onClick={() => changeStatus(e.id, 'bloqueado')}>Bloquear</button>}
-                                                    {e.estado === 'bloqueado' && <button className="btn btn-success btn-sm" onClick={() => changeStatus(e.id, 'activo')}>Reactivar</button>}
-                                                    <button className="btn btn-ghost btn-sm" onClick={() => setModalEmp(e)}>Ver</button>
+                                                    {e.estado === 'activo' && <button className="btn btn-danger btn-sm" onClick={() => changeStatus(e.id, 'bloqueado')}>🚫 Bloquear</button>}
+                                                    {e.estado === 'bloqueado' && <button className="btn btn-success btn-sm" onClick={() => changeStatus(e.id, 'activo')}>♻️ Reactivar</button>}
+                                                    <button className="btn btn-primary btn-sm" onClick={() => setModalEmp(e)}>👁️ Ver Perfil</button>
                                                 </div>
                                             </td>
                                         </tr>
@@ -125,31 +125,57 @@ export default function Employees() {
                             <button className="modal-close" onClick={() => setModalEmp(null)}>✕</button>
                         </div>
                         <div className="modal-body">
-                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
-                                <div><strong className="text-sm text-muted">Email</strong><br />{modalEmp.email || '—'}</div>
-                                <div><strong className="text-sm text-muted">Teléfono</strong><br />{modalEmp.telefono || '—'}</div>
-                                <div><strong className="text-sm text-muted">Edad</strong><br />{modalEmp.edad ? `${modalEmp.edad} años` : '—'}</div>
-                                <div><strong className="text-sm text-muted">Nacionalidad</strong><br />{modalEmp.nacionalidad || '—'}</div>
-                                <div><strong className="text-sm text-muted">Sector</strong><br />{modalEmp.sector || modalEmp.direccion || '—'}</div>
-                                <div><strong className="text-sm text-muted">Experiencia</strong><br />{expLabels[modalEmp.experiencia] || '—'}</div>
-                                <div><strong className="text-sm text-muted">Traslado</strong><br />{trasladoLabels[modalEmp.traslado] || '—'}</div>
-                                <div><strong className="text-sm text-muted">Disponibilidad</strong><br />{modalEmp.disponibilidad !== false ? '🟢 Disponible' : '🔴 Ocupada'}</div>
-                                <div><strong className="text-sm text-muted">Estado</strong><br /><span className={`badge badge-${modalEmp.estado === 'activo' ? 'active' : modalEmp.estado === 'pendiente' ? 'pending' : 'blocked'}`}>{modalEmp.estado}</span></div>
-                                <div><strong className="text-sm text-muted">Coordenadas</strong><br />{modalEmp.lat ? `${modalEmp.lat}, ${modalEmp.lng}` : 'No registradas'}</div>
+                            {/* Profile Header */}
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20, padding: 16, background: 'var(--glass)', borderRadius: 12, border: '1px solid var(--border)' }}>
+                                <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #6C3FC5, #a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 22, flexShrink: 0 }}>{(modalEmp.nombre || 'E')[0]}</div>
+                                <div style={{ flex: 1 }}>
+                                    <div style={{ fontWeight: 700, fontSize: 18 }}>{modalEmp.nombre}</div>
+                                    <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{modalEmp.email || '—'}</div>
+                                    <span className={`badge badge-${modalEmp.estado === 'activo' ? 'active' : modalEmp.estado === 'pendiente' ? 'pending' : 'blocked'}`} style={{ marginTop: 4 }}>{modalEmp.estado}</span>
+                                </div>
                             </div>
+
+                            {/* Info Grid */}
+                            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 14 }}>
+                                <div><strong className="text-sm text-muted">📞 Teléfono</strong><br />{modalEmp.telefono || '—'}</div>
+                                <div><strong className="text-sm text-muted">🎂 Edad</strong><br />{modalEmp.edad ? `${modalEmp.edad} años` : '—'}</div>
+                                <div><strong className="text-sm text-muted">🌍 Nacionalidad</strong><br />{modalEmp.nacionalidad || '—'}</div>
+                                <div><strong className="text-sm text-muted">📍 Sector</strong><br />{modalEmp.sector || modalEmp.direccion || '—'}</div>
+                                <div><strong className="text-sm text-muted">🎯 Experiencia</strong><br />{expLabels[modalEmp.experiencia] || '—'}</div>
+                                <div><strong className="text-sm text-muted">🚌 Traslado</strong><br />{trasladoLabels[modalEmp.traslado] || '—'}</div>
+                                <div><strong className="text-sm text-muted">🟢 Disponibilidad</strong><br />{modalEmp.disponibilidad !== false ? '🟢 Disponible' : '🔴 Ocupada'}</div>
+                                <div><strong className="text-sm text-muted">📌 Coordenadas</strong><br />{modalEmp.lat ? `${modalEmp.lat.toFixed?.(4) || modalEmp.lat}, ${modalEmp.lng.toFixed?.(4) || modalEmp.lng}` : 'No registradas'}</div>
+                            </div>
+
+                            {/* Referencias */}
+                            {modalEmp.referencias && (
+                                <div style={{ marginTop: 16, padding: 12, background: 'rgba(59,130,246,0.06)', border: '1px solid rgba(59,130,246,0.2)', borderRadius: 10 }}>
+                                    <strong className="text-sm text-muted">📝 Referencias</strong><br />
+                                    <span style={{ fontSize: 14 }}>{modalEmp.referencias}</span>
+                                </div>
+                            )}
+
+                            {/* Cédula */}
                             {modalEmp.cedulaURL && (
                                 <div style={{ marginTop: 16 }}>
                                     <strong className="text-sm text-muted">📷 Foto de Cédula</strong><br />
                                     <a href={modalEmp.cedulaURL} target="_blank" rel="noreferrer">
-                                        <img src={modalEmp.cedulaURL} style={{ maxWidth: '100%', maxHeight: 200, borderRadius: 8, marginTop: 8 }} alt="Cédula" />
+                                        <img src={modalEmp.cedulaURL} style={{ maxWidth: '100%', maxHeight: 250, borderRadius: 10, marginTop: 8, border: '1px solid var(--border)' }} alt="Cédula" />
                                     </a>
                                 </div>
                             )}
+                            {!modalEmp.cedulaURL && (
+                                <div style={{ marginTop: 16, padding: 16, textAlign: 'center', background: 'rgba(239,68,68,0.06)', border: '1px solid rgba(239,68,68,0.2)', borderRadius: 10, color: 'var(--text-muted)', fontSize: 13 }}>
+                                    ⚠️ Esta empleada no subió foto de cédula
+                                </div>
+                            )}
                         </div>
-                        <div className="modal-footer">
-                            {modalEmp.estado !== 'activo' && <button className="btn btn-success btn-sm" onClick={() => changeStatus(modalEmp.id, 'activo')}>Aprobar</button>}
-                            {modalEmp.estado !== 'bloqueado' && <button className="btn btn-danger btn-sm" onClick={() => changeStatus(modalEmp.id, 'bloqueado')}>Bloquear</button>}
-                            <button className="btn btn-ghost btn-sm" onClick={() => setModalEmp(null)}>Cerrar</button>
+                        <div className="modal-footer" style={{ flexWrap: 'wrap', gap: 8 }}>
+                            {modalEmp.estado === 'pendiente' && <button className="btn btn-success" onClick={() => changeStatus(modalEmp.id, 'activo')}>✅ Aprobar Empleada</button>}
+                            {modalEmp.estado === 'pendiente' && <button className="btn btn-danger" onClick={() => changeStatus(modalEmp.id, 'bloqueado')}>❌ Rechazar</button>}
+                            {modalEmp.estado === 'activo' && <button className="btn btn-danger" onClick={() => changeStatus(modalEmp.id, 'bloqueado')}>🚫 Bloquear</button>}
+                            {modalEmp.estado === 'bloqueado' && <button className="btn btn-success" onClick={() => changeStatus(modalEmp.id, 'activo')}>♻️ Reactivar</button>}
+                            <button className="btn btn-ghost" onClick={() => setModalEmp(null)}>Cerrar</button>
                         </div>
                     </div>
                 )}
