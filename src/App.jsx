@@ -12,6 +12,7 @@ import Asignacion from './pages/admin/Asignacion';
 import Catalogo from './pages/admin/Catalogo';
 import Finanzas from './pages/admin/Finanzas';
 import Solicitudes from './pages/admin/Solicitudes';
+import Admins from './pages/admin/Admins';
 import EmpleadaDashboard from './pages/empleada/EmpleadaDashboard';
 import Profile from './pages/empleada/Profile';
 
@@ -45,6 +46,7 @@ function AppRoutes() {
         <Route path="clientes" element={<Clients />} />
         <Route path="asignacion" element={<Asignacion />} />
         <Route path="catalogo" element={<Catalogo />} />
+        <Route path="administradores" element={<Admins />} />
       </Route>
       <Route path="/empleada" element={<ProtectedRoute role="empleada"><Layout role="empleada" /></ProtectedRoute>}>
         <Route index element={<EmpleadaDashboard />} />

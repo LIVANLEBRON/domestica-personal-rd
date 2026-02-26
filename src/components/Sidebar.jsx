@@ -19,6 +19,7 @@ export default function Sidebar({ role }) {
         { to: '/admin/clientes', icon: '👥', label: 'Clientes' },
         { to: '/admin/servicios', icon: '📋', label: 'Servicios' },
         { to: '/admin/finanzas', icon: '💰', label: 'Finanzas' },
+        { to: '/admin/administradores', icon: '👑', label: 'Admins' },
     ];
 
     const empLinks = [
