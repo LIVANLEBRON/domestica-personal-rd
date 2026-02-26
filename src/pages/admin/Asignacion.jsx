@@ -4,27 +4,17 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { db } from '../../firebase';
 import { useToast } from '../../contexts/ToastContext';
 
-const SERVICE_TYPES = [
-    { value: 'limpieza', label: '🧹 Limpieza general', price: 1500 },
-    { value: 'cocina', label: '🍳 Cocina', price: 2000 },
-    { value: 'lavado', label: '👕 Lavado y planchado', price: 1200 },
-    { value: 'cuidado_ninos', label: '👶 Cuidado de niños', price: 2500 },
-    { value: 'limpieza_profunda', label: '🧼 Limpieza profunda', price: 3000 },
-    { value: 'jardineria', label: '🌿 Jardinería', price: 1800 },
-    { value: 'planchado', label: '👔 Solo planchado', price: 800 },
-    { value: 'otro', label: '📌 Otro', price: 0 },
-];
-
 const EXP_LABELS = { sin_experiencia: 'Sin exp.', menos_1: '< 1 año', '1_3': '1-3 años', '3_5': '3-5 años', mas_5: '5+ años' };
 
 export default function Asignacion() {
     const [employees, setEmployees] = useState([]);
     const [clients, setClients] = useState([]);
+    const [serviceTypes, setServiceTypes] = useState([]);
     const [selectedEmp, setSelectedEmp] = useState(null);
     const [selectedClient, setSelectedClient] = useState(null);
     const [empSearch, setEmpSearch] = useState('');
     const [clientSearch, setClientSearch] = useState('');
-    const [serviceForm, setServiceForm] = useState({ tipo: 'limpieza', precio: '1500', notas: '', fecha: '' });
+    const [serviceForm, setServiceForm] = useState({ tipo: '', precio: '', notas: '', fecha: '' });
     const [newClientMode, setNewClientMode] = useState(false);
     const [newClient, setNewClient] = useState({ nombre: '', telefono: '', direccion: '' });
     const [step, setStep] = useState(1);
@@ -63,16 +53,25 @@ export default function Asignacion() {
 
         const cliSnap = await getDocs(query(collection(db, 'clientes'), orderBy('creadoEn', 'desc')));
         setClients(cliSnap.docs.map(d => ({ id: d.id, ...d.data() })));
+
+        // Load service types from catalog
+        const catSnap = await getDocs(collection(db, 'catalogoServicios'));
+        const cats = catSnap.docs.filter(d => d.data().activo !== false).map(d => ({ id: d.id, ...d.data() }));
+        setServiceTypes(cats);
+        if (cats.length > 0 && !serviceForm.tipo) {
+            setServiceForm(p => ({ ...p, tipo: cats[0].nombre, precio: String(cats[0].precioBase || '') }));
+        }
     }
 
-    function selectServiceType(tipo) {
-        const found = SERVICE_TYPES.find(s => s.value === tipo);
-        setServiceForm(p => ({ ...p, tipo, precio: found?.price ? String(found.price) : p.precio }));
+    function selectServiceType(nombre) {
+        const found = serviceTypes.find(s => s.nombre === nombre);
+        setServiceForm(p => ({ ...p, tipo: nombre, precio: found?.precioBase ? String(found.precioBase) : p.precio }));
     }
 
     function sendWhatsApp(emp, clientName, clientPhone, clientDir) {
         const empPhone = (emp.telefono || '').replace(/[^0-9]/g, '');
-        const svcLabel = SERVICE_TYPES.find(s => s.value === serviceForm.tipo)?.label || serviceForm.tipo;
+        const found = serviceTypes.find(s => s.nombre === serviceForm.tipo);
+        const svcLabel = found ? `${found.icono} ${found.nombre}` : serviceForm.tipo;
         if (!empPhone) { showToast('⚠️ Empleada no tiene teléfono registrado', 'warning'); return; }
         const whatsappPhone = empPhone.startsWith('1') ? empPhone : `1${empPhone}`;
         const msg = `Hola ${emp.nombre} 👋\n\n` +
@@ -126,7 +125,7 @@ export default function Asignacion() {
     function resetAll() {
         setSelectedEmp(null); setSelectedClient(null);
         setNewClient({ nombre: '', telefono: '', direccion: '' });
-        setServiceForm({ tipo: 'limpieza', precio: '1500', notas: '', fecha: '' });
+        setServiceForm({ tipo: serviceTypes[0]?.nombre || '', precio: String(serviceTypes[0]?.precioBase || ''), notas: '', fecha: '' });
         setNewClientMode(false); setStep(1);
     }
 
@@ -319,19 +318,19 @@ export default function Asignacion() {
                             {/* Service type grid */}
                             <label className="form-label">Tipo de servicio</label>
                             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(170px, 1fr))', gap: 8, marginBottom: 20 }}>
-                                {SERVICE_TYPES.map(s => (
-                                    <button key={s.value} onClick={() => selectServiceType(s.value)}
+                                {serviceTypes.map(s => (
+                                    <button key={s.id} onClick={() => selectServiceType(s.nombre)}
                                         style={{
                                             padding: '12px 14px', borderRadius: 10, cursor: 'pointer', textAlign: 'left',
                                             fontSize: 13, fontWeight: 600, fontFamily: 'inherit',
-                                            border: serviceForm.tipo === s.value ? '2px solid var(--primary)' : '1px solid var(--border)',
-                                            background: serviceForm.tipo === s.value ? 'var(--primary-glow)' : 'var(--glass)',
-                                            color: serviceForm.tipo === s.value ? 'var(--primary-light)' : 'var(--text-muted)',
+                                            border: serviceForm.tipo === s.nombre ? '2px solid var(--primary)' : '1px solid var(--border)',
+                                            background: serviceForm.tipo === s.nombre ? 'var(--primary-glow)' : 'var(--glass)',
+                                            color: serviceForm.tipo === s.nombre ? 'var(--primary-light)' : 'var(--text-muted)',
                                             transition: 'all 0.2s'
                                         }}
                                     >
-                                        {s.label}
-                                        {s.price > 0 && <div style={{ fontSize: 11, opacity: 0.7, marginTop: 2 }}>RD${s.price.toLocaleString()}</div>}
+                                        {s.icono} {s.nombre}
+                                        {s.precioBase > 0 && <div style={{ fontSize: 11, opacity: 0.7, marginTop: 2 }}>RD${s.precioBase.toLocaleString()}</div>}
                                     </button>
                                 ))}
                             </div>
@@ -368,7 +367,7 @@ export default function Asignacion() {
                             <div style={{ fontSize: 60, marginBottom: 16 }}>🎉</div>
                             <h2 style={{ marginBottom: 8 }}>¡Servicio Asignado!</h2>
                             <p className="text-muted" style={{ marginBottom: 24, maxWidth: 400, margin: '0 auto 24px' }}>
-                                Se asignó <strong>{SERVICE_TYPES.find(s => s.value === serviceForm.tipo)?.label}</strong> a <strong>{selectedEmp?.nombre}</strong> para el cliente <strong>{clientName}</strong>.
+                                Se asignó <strong>{serviceTypes.find(s => s.nombre === serviceForm.tipo)?.icono} {serviceForm.tipo}</strong> a <strong>{selectedEmp?.nombre}</strong> para el cliente <strong>{clientName}</strong>.
                             </p>
 
                             {/* WhatsApp CTA */}

@@ -10,6 +10,7 @@ import Services from './pages/admin/Services';
 import Payments from './pages/admin/Payments';
 import Clients from './pages/admin/Clients';
 import Asignacion from './pages/admin/Asignacion';
+import Catalogo from './pages/admin/Catalogo';
 import EmpleadaDashboard from './pages/empleada/EmpleadaDashboard';
 import Profile from './pages/empleada/Profile';
 
@@ -37,6 +38,7 @@ function AppRoutes() {
         <Route path="pagos" element={<Payments />} />
         <Route path="clientes" element={<Clients />} />
         <Route path="asignacion" element={<Asignacion />} />
+        <Route path="catalogo" element={<Catalogo />} />
       </Route>
       <Route path="/empleada" element={<ProtectedRoute role="empleada"><Layout role="empleada" /></ProtectedRoute>}>
         <Route index element={<EmpleadaDashboard />} />
