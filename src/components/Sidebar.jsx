@@ -12,6 +12,7 @@ export default function Sidebar({ role }) {
 
     const adminLinks = [
         { to: '/admin', icon: '📊', label: 'Dashboard' },
+        { to: '/admin/asignacion', icon: '⚡', label: 'Asignación' },
         { to: '/admin/empleadas', icon: '👩', label: 'Empleadas' },
         { to: '/admin/clientes', icon: '👥', label: 'Clientes' },
         { to: '/admin/servicios', icon: '📋', label: 'Servicios' },
