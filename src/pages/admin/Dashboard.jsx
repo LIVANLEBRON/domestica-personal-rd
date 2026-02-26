@@ -28,6 +28,7 @@ const SERVICE_TYPES = [
     { value: 'planchado', label: '👔 Solo planchado', price: 800 },
     { value: 'otro', label: '📌 Otro', price: 0 },
 ];
+const EXP_LABELS = { sin_experiencia: 'Sin exp.', menos_1: '< 1 año', '1_3': '1-3 años', '3_5': '3-5 años', mas_5: '5+ años' };
 
 export default function Dashboard() {
     const [employees, setEmployees] = useState([]);
@@ -109,7 +110,25 @@ export default function Dashboard() {
                 estado: 'asignado',
                 creadoEn: serverTimestamp()
             });
-            showToast('✅ Servicio asignado exitosamente', 'success');
+
+            // Send WhatsApp to employee with predefined message
+            const empPhone = (selectedEmp.telefono || '').replace(/[^0-9]/g, '');
+            const svcLabel = SERVICE_TYPES.find(s => s.value === serviceForm.tipo)?.label || serviceForm.tipo;
+            if (empPhone) {
+                const whatsappPhone = empPhone.startsWith('1') ? empPhone : `1${empPhone}`;
+                const msg = `Hola ${selectedEmp.nombre} 👋\n\n` +
+                    `🏠 *Doméstica Personal RD* te ha asignado un nuevo servicio:\n\n` +
+                    `📌 *Servicio:* ${svcLabel}\n` +
+                    `👤 *Cliente:* ${clientName}\n` +
+                    `📍 *Dirección:* ${clientDir || 'Por confirmar'}\n` +
+                    `📞 *Tel. Cliente:* ${clientPhone || '—'}\n` +
+                    `💰 *Precio:* RD$${parseFloat(serviceForm.precio).toLocaleString()}\n\n` +
+                    `¿Puedes aceptar este trabajo? Responde *SÍ* para confirmar o *NO* si no puedes.\n\n` +
+                    `¡Gracias! 🙏`;
+                window.open(`https://wa.me/${whatsappPhone}?text=${encodeURIComponent(msg)}`, '_blank');
+            }
+
+            showToast('✅ Servicio asignado — WhatsApp abierto', 'success');
             setSelectedEmp(null); setSelectedClient(null);
             setNewClient({ nombre: '', telefono: '', direccion: '' });
             setServiceForm({ tipo: 'limpieza', precio: '', notas: '' });
@@ -167,11 +186,21 @@ export default function Dashboard() {
                             {mapEmployees.map(emp => (
                                 <Marker key={emp.id} position={[emp.lat, emp.lng]} icon={emp.disponibilidad !== false ? greenIcon : redIcon}>
                                     <Popup>
-                                        <div style={{ color: '#333', minWidth: 150 }}>
-                                            <strong>{emp.nombre}</strong><br />
-                                            📍 {emp.sector || emp.direccion}<br />
-                                            📞 {emp.telefono || '—'}<br />
-                                            <button onClick={() => { setSelectedEmp(emp); }} style={{ marginTop: 6, padding: '6px 16px', background: '#6C3FC5', color: '#fff', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600 }}>✅ Seleccionar</button>
+                                        <div style={{ color: '#333', minWidth: 220, fontFamily: 'Inter, sans-serif' }}>
+                                            <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 8 }}>
+                                                <div style={{ width: 40, height: 40, borderRadius: '50%', background: 'linear-gradient(135deg, #6C3FC5, #a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 16, flexShrink: 0 }}>{(emp.nombre || 'E')[0]}</div>
+                                                <div>
+                                                    <div style={{ fontWeight: 700, fontSize: 15, color: '#111' }}>{emp.nombre}</div>
+                                                    <div style={{ fontSize: 11, color: '#666' }}>{emp.disponibilidad !== false ? '🟢 Disponible' : '🔴 Ocupada'}</div>
+                                                </div>
+                                            </div>
+                                            <div style={{ fontSize: 12, lineHeight: 1.8, color: '#444', borderTop: '1px solid #eee', paddingTop: 6 }}>
+                                                <div>📍 <strong>Sector:</strong> {emp.sector || emp.direccion || '—'}</div>
+                                                <div>📞 <strong>Tel:</strong> {emp.telefono || '—'}</div>
+                                                <div>🎯 <strong>Exp:</strong> {EXP_LABELS[emp.experiencia] || '—'}</div>
+                                                <div>🚌 <strong>Traslado:</strong> {emp.traslado === 'no' ? '✅ Sin problema' : emp.traslado === 'si' ? '❌ Con dificultad' : '⚠️ Depende'}</div>
+                                            </div>
+                                            <button onClick={() => { setSelectedEmp(emp); }} style={{ marginTop: 8, padding: '8px 0', width: '100%', background: 'linear-gradient(135deg, #6C3FC5, #a855f7)', color: '#fff', border: 'none', borderRadius: 8, cursor: 'pointer', fontWeight: 700, fontSize: 13 }}>✅ Seleccionar para servicio</button>
                                         </div>
                                     </Popup>
                                 </Marker>
