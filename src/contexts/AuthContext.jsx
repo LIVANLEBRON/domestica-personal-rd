@@ -16,8 +16,22 @@ export function AuthProvider({ children }) {
             if (firebaseUser) {
                 const snap = await getDoc(doc(db, 'usuarios', firebaseUser.uid));
                 if (snap.exists()) {
+                    const data = snap.data();
+
+                    // Auto-sync Google photo URL if missing in Firestore but available in Firebase Auth
+                    if (!data.fotoURL && firebaseUser.photoURL) {
+                        try {
+                            await setDoc(doc(db, 'usuarios', firebaseUser.uid), {
+                                fotoURL: firebaseUser.photoURL
+                            }, { merge: true });
+                            data.fotoURL = firebaseUser.photoURL;
+                        } catch (e) {
+                            console.error('Error auto-syncing photoURL:', e);
+                        }
+                    }
+
                     setUser(firebaseUser);
-                    setUserData(snap.data());
+                    setUserData(data);
                 } else {
                     setUser(firebaseUser);
                     setUserData(null);
