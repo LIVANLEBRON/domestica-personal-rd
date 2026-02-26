@@ -19,7 +19,8 @@ function ProtectedRoute({ children, role }) {
   const { user, userData, loading } = useAuth();
   if (loading) return <div className="loading-screen"><div className="loading-spinner" /></div>;
   if (!user) return <Navigate to="/" />;
-  if (role && userData?.rol !== role) return <Navigate to="/" />;
+  if (role && !userData) return <div className="loading-screen"><div className="loading-spinner" /></div>;
+  if (role && userData?.rol !== role) return <Navigate to="/" replace />;
   return children;
 }
 
@@ -28,9 +29,11 @@ function AppRoutes() {
 
   if (loading) return <div className="loading-screen"><div className="loading-spinner" /></div>;
 
+  if (user && !userData) return <div className="loading-screen"><div className="loading-spinner" /></div>;
+
   return (
     <Routes>
-      <Route path="/" element={user ? <Navigate to={userData?.rol === 'admin' ? '/admin' : '/empleada'} /> : <Login />} />
+      <Route path="/" element={user ? <Navigate to={userData?.rol === 'admin' ? '/admin' : '/empleada'} replace /> : <Login />} />
       <Route path="/register" element={<Register />} />
       <Route path="/admin" element={<ProtectedRoute role="admin"><Layout role="admin" /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />

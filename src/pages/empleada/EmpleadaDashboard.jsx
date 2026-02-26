@@ -5,13 +5,14 @@ import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 
 export default function EmpleadaDashboard() {
-    const { user, userData } = useAuth();
+    const { user, userData, refreshUserData } = useAuth();
     const { showToast } = useToast();
     const [tab, setTab] = useState('servicios');
     const [services, setServices] = useState([]);
     const [visitas, setVisitas] = useState([]);
     const [payments, setPayments] = useState([]);
     const [expandedSvc, setExpandedSvc] = useState(null);
+    const [resending, setResending] = useState(false);
 
     useEffect(() => { if (user) loadData(); }, [user]);
 
@@ -53,10 +54,59 @@ export default function EmpleadaDashboard() {
         } catch (err) { showToast('Error: ' + err.message, 'error'); }
     }
 
+    async function resendRequest() {
+        if (!confirm('¿Estás segura de que deseas reenviar tu solicitud para revisión?')) return;
+        setResending(true);
+        try {
+            await updateDoc(doc(db, 'usuarios', user.uid), {
+                estado: 'pendiente',
+                creadoEn: serverTimestamp()
+            });
+            await updateDoc(doc(db, 'empleadas', user.uid), {
+                estado: 'pendiente',
+                creadoEn: serverTimestamp()
+            });
+            await refreshUserData();
+            showToast('✅ Solicitud reenviada con éxito para revisión', 'success');
+        } catch (err) {
+            showToast('Error al reenviar solicitud: ' + err.message, 'error');
+        }
+        setResending(false);
+    }
+
     const statusBanner = () => {
-        if (userData?.estado === 'pendiente') return <div className="status-banner pending">⏳ Tu cuenta está pendiente de aprobación.</div>;
-        if (userData?.estado === 'bloqueado') return <div className="status-banner blocked">🚫 Tu cuenta ha sido bloqueada.</div>;
-        return null;
+        const estado = userData?.estado;
+        if (!estado || estado === 'activo') return null;
+
+        const createdAt = userData?.creadoEn?.toDate ? userData.creadoEn.toDate() : new Date();
+        const diffMinutes = (new Date() - createdAt) / (1000 * 60);
+
+        const canResendPending = estado === 'pendiente' && diffMinutes >= 20;
+        const canResendBlocked = estado === 'bloqueado';
+        const canResend = canResendPending || canResendBlocked;
+
+        return (
+            <div className={`status-banner ${estado === 'bloqueado' ? 'blocked' : 'pending'}`} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 12 }}>
+                <div>
+                    {estado === 'bloqueado' ? '🚫 Tu cuenta ha sido bloqueada o rechazada.' : '⏳ Tu cuenta está pendiente de aprobación.'}
+                    {estado === 'pendiente' && diffMinutes < 20 && (
+                        <div style={{ fontSize: 12, opacity: 0.8, marginTop: 4 }}>
+                            Podrás reenviar la solicitud en {Math.ceil(20 - diffMinutes)} minutos.
+                        </div>
+                    )}
+                </div>
+                {canResend && (
+                    <button
+                        className={`btn ${estado === 'bloqueado' ? 'btn-danger' : 'btn-primary'} btn-sm`}
+                        onClick={resendRequest}
+                        disabled={resending}
+                        style={{ whiteSpace: 'nowrap' }}
+                    >
+                        {resending ? 'Enviando...' : '🔄 Reenviar Solicitud'}
+                    </button>
+                )}
+            </div>
+        );
     };
 
     const activeServices = services.filter(s => s.estado === 'activo');
