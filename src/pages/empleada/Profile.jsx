@@ -31,8 +31,8 @@ export default function Profile() {
     async function saveProfile() {
         setSaving(true);
         try {
-            let cedulaURL = profile.cedulaURL;
-            let fotoURL = profile.fotoURL;
+            let cedulaURL = profile.cedulaURL || null;
+            let fotoURL = profile.fotoURL || null;
 
             // Upload new Cedula if selected
             if (cedulaFile) {
