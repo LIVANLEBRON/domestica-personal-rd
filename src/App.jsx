@@ -7,10 +7,10 @@ import Register from './pages/Register';
 import Dashboard from './pages/admin/Dashboard';
 import Employees from './pages/admin/Employees';
 import Services from './pages/admin/Services';
-import Payments from './pages/admin/Payments';
 import Clients from './pages/admin/Clients';
 import Asignacion from './pages/admin/Asignacion';
 import Catalogo from './pages/admin/Catalogo';
+import Finanzas from './pages/admin/Finanzas';
 import EmpleadaDashboard from './pages/empleada/EmpleadaDashboard';
 import Profile from './pages/empleada/Profile';
 
@@ -35,7 +35,8 @@ function AppRoutes() {
         <Route index element={<Dashboard />} />
         <Route path="empleadas" element={<Employees />} />
         <Route path="servicios" element={<Services />} />
-        <Route path="pagos" element={<Payments />} />
+        <Route path="finanzas" element={<Finanzas />} />
+        <Route path="pagos" element={<Navigate to="/admin/finanzas" replace />} />
         <Route path="clientes" element={<Clients />} />
         <Route path="asignacion" element={<Asignacion />} />
         <Route path="catalogo" element={<Catalogo />} />

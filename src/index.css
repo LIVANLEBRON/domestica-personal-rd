@@ -621,6 +621,22 @@ a {
   font-size: 13px;
 }
 
+/* Fix select/option dropdown colors for dark theme */
+select.form-control,
+.filter-select,
+select {
+  background-color: var(--bg-card);
+  color: var(--text);
+}
+
+select.form-control option,
+.filter-select option,
+select option {
+  background-color: #1e1e3a;
+  color: #e2e2f0;
+  padding: 8px;
+}
+
 /* Modal */
 .modal-overlay {
   position: fixed;
