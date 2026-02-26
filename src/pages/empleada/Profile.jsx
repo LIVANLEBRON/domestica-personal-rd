@@ -176,40 +176,45 @@ export default function Profile() {
                             📍 Actualizar mi ubicación
                         </button>
 
-                        <div className="form-group" style={{ marginTop: 24, padding: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 12, border: '1px solid var(--border)' }}>
-                            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                                📷 Foto de Perfil Opcional
+                        <div className="form-group" style={{ marginTop: 24, padding: 20, background: 'rgba(255,255,255,0.03)', borderRadius: 12, border: '1px solid var(--border)' }}>
+                            <label className="form-label" style={{ fontSize: 16, fontWeight: 700, marginBottom: 16, display: 'block' }}>
+                                📷 Foto de Perfil (Opcional)
                             </label>
 
-                            {(fotoPreview || profile?.fotoURL) && (
-                                <div style={{ marginBottom: 12 }}>
-                                    <img src={fotoPreview || profile.fotoURL} style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: '50%', border: '2px solid var(--primary)' }} alt="Perfil" />
+                            <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap' }}>
+                                {(fotoPreview || profile?.fotoURL) ? (
+                                    <img src={fotoPreview || profile.fotoURL} style={{ width: 100, height: 100, objectFit: 'cover', borderRadius: '50%', border: '3px solid var(--primary)' }} alt="Perfil" />
+                                ) : (
+                                    <div style={{ width: 100, height: 100, borderRadius: '50%', background: 'rgba(255,255,255,0.1)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 32 }}>👤</div>
+                                )}
+
+                                <div style={{ flex: 1, minWidth: 200 }}>
+                                    <label className="btn btn-primary" style={{ display: 'inline-flex', cursor: 'pointer', margin: 0, width: '100%', justifyContent: 'center' }}>
+                                        {fotoFile ? '✅ Archivo listo para guardar' : 'Subir o cambiar foto'}
+                                        <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setFotoFile, setFotoPreview)} style={{ display: 'none' }} />
+                                    </label>
+                                    <p style={{ fontSize: 12, color: 'var(--text-muted)', marginTop: 8 }}>Recomendado: Imagen cuadrada, max 2MB.</p>
                                 </div>
-                            )}
-
-                            <label style={{ display: 'inline-block', padding: '10px 16px', background: 'rgba(59,130,246,0.1)', color: '#3b82f6', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
-                                {fotoFile ? '✅ Archivo seleccionado' : 'Subir o cambiar foto'}
-                                <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setFotoFile, setFotoPreview)} style={{ display: 'none' }} />
-                            </label>
+                            </div>
                         </div>
 
-                        <div className="form-group" style={{ marginTop: 16, padding: 16, background: 'rgba(255,255,255,0.03)', borderRadius: 12, border: '1px solid var(--border)' }}>
-                            <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                        <div className="form-group" style={{ marginTop: 24, padding: 20, background: 'rgba(255,255,255,0.03)', borderRadius: 12, border: '1px solid var(--border)' }}>
+                            <label className="form-label" style={{ fontSize: 16, fontWeight: 700, marginBottom: 8, display: 'block' }}>
                                 🪪 Documento de Cédula
                             </label>
 
-                            <p style={{ fontSize: 12, color: 'var(--text-muted)', marginBottom: 12 }}>Sube una foto clara de tu cédula por ambos lados o solo frente si se lee bien.</p>
+                            <p style={{ fontSize: 13, color: 'var(--text-muted)', marginBottom: 20 }}>Sube una foto clara de tu cédula por ambos lados o solo frente si se lee bien.</p>
 
-                            {(cedulaPreview || profile?.cedulaURL) && (
-                                <div style={{ marginBottom: 12 }}>
-                                    <img src={cedulaPreview || profile.cedulaURL} style={{ maxWidth: '100%', maxHeight: 200, objectFit: 'cover', borderRadius: 8, border: '1px solid rgba(255,255,255,0.1)' }} alt="Cédula" />
-                                </div>
-                            )}
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+                                {(cedulaPreview || profile?.cedulaURL) && (
+                                    <img src={cedulaPreview || profile.cedulaURL} style={{ width: '100%', maxHeight: 250, objectFit: 'contain', borderRadius: 12, border: '2px dashed rgba(255,255,255,0.2)', background: 'rgba(0,0,0,0.3)' }} alt="Cédula" />
+                                )}
 
-                            <label style={{ display: 'inline-block', padding: '10px 16px', background: 'rgba(139,92,246,0.1)', color: '#8b5cf6', borderRadius: 8, cursor: 'pointer', fontSize: 13, fontWeight: 600 }}>
-                                {cedulaFile ? '✅ Archivo seleccionado' : (profile?.cedulaURL ? 'Cambiar cédula' : 'Subir foto de cédula')}
-                                <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setCedulaFile, setCedulaPreview)} style={{ display: 'none' }} />
-                            </label>
+                                <label className="btn btn-secondary" style={{ display: 'inline-flex', cursor: 'pointer', margin: 0, width: '100%', justifyContent: 'center' }}>
+                                    {cedulaFile ? '✅ Archivo listo para guardar' : (profile?.cedulaURL ? 'Cambiar foto de cédula' : 'Subir foto de cédula')}
+                                    <input type="file" accept="image/*" onChange={(e) => handleFileChange(e, setCedulaFile, setCedulaPreview)} style={{ display: 'none' }} />
+                                </label>
+                            </div>
                         </div>
                     </div>
                 </div>
