@@ -45,6 +45,13 @@ export function AuthProvider({ children }) {
                 estado: 'pendiente',
                 creadoEn: serverTimestamp()
             });
+        } else {
+            // Update photo for existing users when they login with Google
+            if (cred.user.photoURL) {
+                await setDoc(doc(db, 'usuarios', cred.user.uid), {
+                    fotoURL: cred.user.photoURL
+                }, { merge: true });
+            }
         }
         return cred;
     };

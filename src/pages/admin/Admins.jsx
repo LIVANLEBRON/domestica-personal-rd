@@ -136,41 +136,46 @@ export default function Admins() {
             </div>
 
             {isModalOpen && (
-                <div className="modal-overlay">
-                    <div className="modal-content">
-                        <h3>Añadir Nuevo Administrador</h3>
-                        <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 20 }}>
-                            El usuario debe haber iniciado sesión con Google en la app al menos una vez para registrar su correo.
-                        </p>
-                        <form onSubmit={handlePromoteAdmin}>
-                            <div className="form-group">
-                                <label className="form-label">Nombre del Administrador</label>
-                                <input
-                                    className="form-control"
-                                    placeholder="Ej. Juan Pérez"
-                                    value={newAdmin.nombre}
-                                    onChange={e => setNewAdmin({ ...newAdmin, nombre: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div className="form-group">
-                                <label className="form-label">Correo de Google (Exacto)</label>
-                                <input
-                                    type="email"
-                                    className="form-control"
-                                    placeholder="ejemplo@gmail.com"
-                                    value={newAdmin.email}
-                                    onChange={e => setNewAdmin({ ...newAdmin, email: e.target.value })}
-                                    required
-                                />
-                            </div>
-                            <div className="modal-actions mt-4">
-                                <button type="button" className="btn btn-ghost" onClick={() => setIsModalOpen(false)}>Cancelar</button>
-                                <button type="submit" className="btn btn-primary" disabled={saving}>
-                                    {saving ? 'Guardando...' : 'Dar Acceso de Admin'}
-                                </button>
-                            </div>
-                        </form>
+                <div className="modal-overlay show" onClick={() => setIsModalOpen(false)}>
+                    <div className="modal" onClick={e => e.stopPropagation()}>
+                        <div className="modal-header">
+                            <h3 className="modal-title">Añadir Nuevo Administrador</h3>
+                            <button className="modal-close" onClick={() => setIsModalOpen(false)}>✕</button>
+                        </div>
+                        <div className="modal-body">
+                            <p style={{ color: 'var(--text-muted)', fontSize: 13, marginBottom: 20 }}>
+                                El usuario debe haber iniciado sesión con Google en la app al menos una vez para registrar su correo.
+                            </p>
+                            <form onSubmit={handlePromoteAdmin}>
+                                <div className="form-group">
+                                    <label className="form-label">Nombre del Administrador</label>
+                                    <input
+                                        className="form-control"
+                                        placeholder="Ej. Juan Pérez"
+                                        value={newAdmin.nombre}
+                                        onChange={e => setNewAdmin({ ...newAdmin, nombre: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">Correo de Google (Exacto)</label>
+                                    <input
+                                        type="email"
+                                        className="form-control"
+                                        placeholder="ejemplo@gmail.com"
+                                        value={newAdmin.email}
+                                        onChange={e => setNewAdmin({ ...newAdmin, email: e.target.value })}
+                                        required
+                                    />
+                                </div>
+                                <div className="modal-footer" style={{ marginTop: 24, padding: 0, border: 'none', display: 'flex', gap: 12, justifyContent: 'flex-end' }}>
+                                    <button type="button" className="btn btn-ghost" onClick={() => setIsModalOpen(false)}>Cancelar</button>
+                                    <button type="submit" className="btn btn-primary" disabled={saving}>
+                                        {saving ? 'Guardando...' : 'Dar Acceso de Admin'}
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
                     </div>
                 </div>
             )}
