@@ -17,23 +17,22 @@ export default function Solicitudes() {
         setLoading(true);
         try {
             const empSnap = await getDocs(collection(db, 'empleadas'));
-            const userSnap = await getDocs(collection(db, 'usuarios'));
-
-            const userMap = {};
-            userSnap.docs.forEach(u => { userMap[u.id] = u.data(); });
 
             const pending = [];
             for (const d of empSnap.docs) {
                 const empData = d.data();
-                if (empData.estado === 'pendiente' && userMap[d.id]?.rol !== 'admin') {
-                    pending.push({ id: d.id, ...empData, ...userMap[d.id] });
+
+                // Directamente verificar si el estado es pendiente.
+                // Como las `empleadas` solo son empleadas, no necesitamos chequear roles en la BD de `usuarios`
+                if (empData.estado === 'pendiente') {
+                    pending.push({ id: d.id, ...empData });
                 }
             }
             // Sort newest first
             pending.sort((a, b) => (b.creadoEn?.seconds || 0) - (a.creadoEn?.seconds || 0));
             setPendingEmployees(pending);
         } catch (err) {
-            console.error(err);
+            console.error('[loadPending] Error cargando solicitudes:', err);
             showToast('Error cargando solicitudes', 'error');
         }
         setLoading(false);

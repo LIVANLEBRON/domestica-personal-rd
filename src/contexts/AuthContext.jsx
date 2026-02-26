@@ -49,8 +49,15 @@ export function AuthProvider({ children }) {
     };
 
     const register = async (email, password, extraData) => {
-        const cred = await createUserWithEmailAndPassword(auth, email, password);
-        return { uid: cred.user.uid, user: cred.user };
+        try {
+            const cred = await createUserWithEmailAndPassword(auth, email, password);
+            return { uid: cred.user.uid, user: cred.user };
+        } catch (err) {
+            const code = err?.code;
+            const message = err?.message || 'Error creando la cuenta';
+            console.error('[Auth] register failed', { code, message, err });
+            throw new Error(code ? `${code}: ${message}` : message);
+        }
     };
 
     const logout = () => signOut(auth);
