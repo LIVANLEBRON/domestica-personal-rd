@@ -78,8 +78,25 @@ export default function Dashboard() {
         showToast('📥 Excel descargado', 'success');
     }
 
+    const activeEmployees = employees.filter(e => e.estado === 'activo');
     const pendingEmployees = employees.filter(e => e.estado === 'pendiente');
-    const mapEmployees = employees.filter(e => e.lat && e.lng && e.estado === 'activo');
+
+    // Agrupar y ajustar coordenadas idénticas para que no se oculten unas debajo de otras
+    const positionCounts = {};
+    const mapEmployees = activeEmployees.filter(e => e.lat && e.lng).map(e => {
+        const key = `${e.lat},${e.lng}`;
+        if (positionCounts[key]) {
+            positionCounts[key] += 1;
+            // Add a tiny offset to overlapping markers
+            const offset = positionCounts[key] * 0.0015;
+            return { ...e, lat: e.lat + offset, lng: e.lng + offset };
+        } else {
+            positionCounts[key] = 1;
+            return e;
+        }
+    });
+
+    const unmappedCount = activeEmployees.length - mapEmployees.length;
 
     return (
         <>
@@ -104,8 +121,15 @@ export default function Dashboard() {
 
                 {/* Map */}
                 <div className="panel-section">
-                    <div className="panel-section-header">
-                        <h3>🗺️ Mapa de Empleadas</h3>
+                    <div className="panel-section-header" style={{ flexWrap: 'wrap', gap: 12 }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <h3 style={{ margin: 0 }}>🗺️ Mapa de Empleadas</h3>
+                            {unmappedCount > 0 && (
+                                <span className="badge" style={{ background: 'rgba(245,158,11,0.1)', color: '#F59E0B', border: '1px solid rgba(245,158,11,0.2)' }}>
+                                    ⚠️ {unmappedCount} sin ubicación
+                                </span>
+                            )}
+                        </div>
                         <div className="map-legend">
                             <span><span className="legend-dot available" /> Disponible</span>
                             <span><span className="legend-dot busy" /> Ocupada</span>
