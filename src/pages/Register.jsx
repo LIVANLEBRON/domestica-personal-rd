@@ -1,10 +1,10 @@
 import { useState, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
-import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import { useAuth } from '../contexts/AuthContext';
 import { useToast } from '../contexts/ToastContext';
-import { db, storage } from '../firebase';
+import { db } from '../firebase';
+import { uploadToCloudinary } from '../utils/cloudinary';
 
 export default function Register() {
     const [form, setForm] = useState({
@@ -57,9 +57,8 @@ export default function Register() {
 
             let cedulaURL = null;
             if (cedulaFile) {
-                const storageRef = ref(storage, `cedulas/${uid}_${cedulaFile.name}`);
-                await uploadBytes(storageRef, cedulaFile);
-                cedulaURL = await getDownloadURL(storageRef);
+                // Upload image directly to Cloudinary
+                cedulaURL = await uploadToCloudinary(cedulaFile);
             }
 
             await setDoc(doc(db, 'usuarios', uid), {

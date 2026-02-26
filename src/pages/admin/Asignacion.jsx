@@ -332,7 +332,10 @@ export default function Asignacion() {
                                             <input className="form-control" placeholder="Dirección del hogar" value={newClient.direccion} onChange={e => setNewClient(p => ({ ...p, direccion: e.target.value }))} />
                                         </div>
                                     </div>
-                                    <button className="btn btn-primary" disabled={!newClient.nombre} onClick={() => setStep(3)}>Continuar →</button>
+                                    <div className="sticky-bottom-bar">
+                                        <button className="btn btn-ghost" onClick={() => setStep(1)}>← Volver</button>
+                                        <button className="btn btn-primary" disabled={!newClient.nombre} onClick={() => setStep(3)}>Continuar →</button>
+                                    </div>
                                 </div>
                             )}
                         </div>
@@ -444,12 +447,12 @@ export default function Asignacion() {
                                 </div>
                             </div>
 
-                            <div style={{ display: 'flex', gap: 10, marginTop: 16 }}>
+                            <div className="sticky-bottom-bar">
                                 <button className="btn btn-ghost" onClick={() => setStep(2)}>← Atrás</button>
                                 <button className="btn btn-primary" onClick={createService}
                                     disabled={!serviceForm.precio || !serviceForm.fechaInicio || creating}
-                                    style={{ flex: 1, padding: '14px 20px', fontSize: 15 }}>
-                                    {creating ? '⏳ Creando visitas...' : `✅ Asignar (${totalVisitas} visitas)`}
+                                    style={{ flex: 1, padding: '14px 20px', fontSize: 13 }}>
+                                    {creating ? '⏳ Espere...' : `✅ Asignar (${totalVisitas})`}
                                 </button>
                             </div>
                         </div>

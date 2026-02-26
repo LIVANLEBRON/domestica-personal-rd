@@ -89,14 +89,14 @@ export default function Employees() {
                                         <tr><td colSpan="8" className="text-center text-muted" style={{ padding: 40 }}>No se encontraron empleadas</td></tr>
                                     ) : filtered.map(e => (
                                         <tr key={e.id}>
-                                            <td><strong>{e.nombre || '—'}</strong><br /><span className="text-sm text-muted">{e.email || ''}</span></td>
-                                            <td>{e.edad || '—'}</td>
-                                            <td className="text-sm">{e.sector || e.direccion || '—'}</td>
-                                            <td>{e.telefono || '—'}</td>
-                                            <td>{expLabels[e.experiencia] || '—'}</td>
-                                            <td className="text-sm">{trasladoLabels[e.traslado] || '—'}</td>
-                                            <td><span className={`badge badge-${e.estado === 'activo' ? 'active' : e.estado === 'pendiente' ? 'pending' : 'blocked'}`}>{e.estado}</span></td>
-                                            <td>
+                                            <td data-label="Nombre"><strong>{e.nombre || '—'}</strong><br /><span className="text-sm text-muted">{e.email || ''}</span></td>
+                                            <td data-label="Edad">{e.edad || '—'}</td>
+                                            <td data-label="Sector" className="text-sm">{e.sector || e.direccion || '—'}</td>
+                                            <td data-label="Teléfono">{e.telefono || '—'}</td>
+                                            <td data-label="Experiencia">{expLabels[e.experiencia] || '—'}</td>
+                                            <td data-label="Traslado" className="text-sm">{trasladoLabels[e.traslado] || '—'}</td>
+                                            <td data-label="Estado"><span className={`badge badge-${e.estado === 'activo' ? 'active' : e.estado === 'pendiente' ? 'pending' : 'blocked'}`}>{e.estado}</span></td>
+                                            <td data-label="Acciones">
                                                 <div className="flex gap-2">
                                                     {e.estado === 'pendiente' && <>
                                                         <button className="btn btn-success btn-sm" onClick={() => changeStatus(e.id, 'activo')}>Aprobar</button>

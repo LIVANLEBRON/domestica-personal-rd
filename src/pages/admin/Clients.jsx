@@ -120,12 +120,12 @@ export default function Clients() {
                                         </td></tr>
                                     ) : filtered.map(c => (
                                         <tr key={c.id}>
-                                            <td><strong>{c.nombre}</strong></td>
-                                            <td>{c.telefono || '—'}</td>
-                                            <td className="text-sm">{c.email || '—'}</td>
-                                            <td className="text-sm">{c.direccion || '—'}</td>
-                                            <td className="text-sm text-muted">{c.notas || '—'}</td>
-                                            <td>
+                                            <td data-label="Nombre"><strong>{c.nombre}</strong></td>
+                                            <td data-label="Teléfono">{c.telefono || '—'}</td>
+                                            <td data-label="Email" className="text-sm">{c.email || '—'}</td>
+                                            <td data-label="Dirección" className="text-sm">{c.direccion || '—'}</td>
+                                            <td data-label="Notas" className="text-sm text-muted">{c.notas || '—'}</td>
+                                            <td data-label="Acciones">
                                                 <div className="flex gap-2">
                                                     <button className="btn btn-ghost btn-sm" onClick={() => openEdit(c)}>✏️ Editar</button>
                                                     <button className="btn btn-danger btn-sm" onClick={() => deleteClient(c.id)}>🗑️</button>
