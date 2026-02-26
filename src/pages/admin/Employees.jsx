@@ -90,6 +90,19 @@ export default function Employees() {
                                     ) : filtered.map(e => (
                                         <tr key={e.id}>
                                             <td data-label="Nombre"><strong>{e.nombre || '—'}</strong><br /><span className="text-sm text-muted">{e.email || ''}</span></td>
+                                            <td data-label="Nombre">
+                                                <div className="flex align-center gap-2">
+                                                    {e.fotoURL ? (
+                                                        <img src={e.fotoURL} style={{ width: 32, height: 32, borderRadius: '50%', objectFit: 'cover' }} alt="Perfil" />
+                                                    ) : (
+                                                        <div className="avatar-circle">{(e.nombre || 'E')[0]}</div>
+                                                    )}
+                                                    <div>
+                                                        <strong>{e.nombre}</strong>
+                                                        <div className="text-sm text-muted">{e.email}</div>
+                                                    </div>
+                                                </div>
+                                            </td>
                                             <td data-label="Edad">{e.edad || '—'}</td>
                                             <td data-label="Sector" className="text-sm">{e.sector || e.direccion || '—'}</td>
                                             <td data-label="Teléfono">{e.telefono || '—'}</td>
@@ -127,7 +140,11 @@ export default function Employees() {
                         <div className="modal-body">
                             {/* Profile Header */}
                             <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginBottom: 20, padding: 16, background: 'var(--glass)', borderRadius: 12, border: '1px solid var(--border)' }}>
-                                <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #6C3FC5, #a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 22, flexShrink: 0 }}>{(modalEmp.nombre || 'E')[0]}</div>
+                                {modalEmp.fotoURL ? (
+                                    <img src={modalEmp.fotoURL} style={{ width: 64, height: 64, borderRadius: '50%', objectFit: 'cover', border: '2px solid var(--primary)', flexShrink: 0 }} alt={modalEmp.nombre} />
+                                ) : (
+                                    <div style={{ width: 56, height: 56, borderRadius: '50%', background: 'linear-gradient(135deg, #6C3FC5, #a855f7)', display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#fff', fontWeight: 700, fontSize: 22, flexShrink: 0 }}>{(modalEmp.nombre || 'E')[0]}</div>
+                                )}
                                 <div style={{ flex: 1 }}>
                                     <div style={{ fontWeight: 700, fontSize: 18 }}>{modalEmp.nombre}</div>
                                     <div style={{ fontSize: 12, color: 'var(--text-muted)' }}>{modalEmp.email || '—'}</div>

@@ -11,6 +11,7 @@ import Clients from './pages/admin/Clients';
 import Asignacion from './pages/admin/Asignacion';
 import Catalogo from './pages/admin/Catalogo';
 import Finanzas from './pages/admin/Finanzas';
+import Solicitudes from './pages/admin/Solicitudes';
 import EmpleadaDashboard from './pages/empleada/EmpleadaDashboard';
 import Profile from './pages/empleada/Profile';
 
@@ -33,6 +34,7 @@ function AppRoutes() {
       <Route path="/register" element={<Register />} />
       <Route path="/admin" element={<ProtectedRoute role="admin"><Layout role="admin" /></ProtectedRoute>}>
         <Route index element={<Dashboard />} />
+        <Route path="solicitudes" element={<Solicitudes />} />
         <Route path="empleadas" element={<Employees />} />
         <Route path="servicios" element={<Services />} />
         <Route path="finanzas" element={<Finanzas />} />

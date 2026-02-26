@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { collection, getDocs, query, orderBy, limit } from 'firebase/firestore';
+import { collection, getDocs, doc, updateDoc, query, orderBy, limit } from 'firebase/firestore';
 import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import { useNavigate } from 'react-router-dom';
 import L from 'leaflet';
@@ -20,6 +20,7 @@ const greenIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/point
 const redIcon = new L.Icon({ iconUrl: 'https://raw.githubusercontent.com/pointhi/leaflet-color-markers/master/img/marker-icon-red.png', shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/images/marker-shadow.png', iconSize: [25, 41], iconAnchor: [12, 41], popupAnchor: [1, -34], shadowSize: [41, 41] });
 
 const EXP_LABELS = { sin_experiencia: 'Sin exp.', menos_1: '< 1 año', '1_3': '1-3 años', '3_5': '3-5 años', mas_5: '5+ años' };
+const TRASLADO_LABELS = { no: '✅ Sin problema', si: '❌ Con dificultad', depende: '⚠️ Depende' };
 
 export default function Dashboard() {
     const [employees, setEmployees] = useState([]);
@@ -54,6 +55,18 @@ export default function Dashboard() {
         setStats({ active: activeCount, pending: pendingCount, services: svcs.length, income: totalIncome });
     }
 
+    async function changeStatus(id, newStatus) {
+        await updateDoc(doc(db, 'usuarios', id), { estado: newStatus });
+        await updateDoc(doc(db, 'empleadas', id), { estado: newStatus });
+        setEmployees(prev => prev.map(e => e.id === id ? { ...e, estado: newStatus } : e));
+        setStats(prev => ({
+            ...prev,
+            pending: prev.pending - 1,
+            active: newStatus === 'activo' ? prev.active + 1 : prev.active
+        }));
+        showToast(newStatus === 'activo' ? '✅ Empleada aprobada' : '❌ Empleada rechazada', 'success');
+    }
+
     function exportExcel() {
         const data = employees.map(e => ({
             Nombre: e.nombre, Email: e.email, Teléfono: e.telefono,
@@ -65,6 +78,7 @@ export default function Dashboard() {
         showToast('📥 Excel descargado', 'success');
     }
 
+    const pendingEmployees = employees.filter(e => e.estado === 'pendiente');
     const mapEmployees = employees.filter(e => e.lat && e.lng && e.estado === 'activo');
 
     return (
@@ -83,7 +97,7 @@ export default function Dashboard() {
                 {/* Stats */}
                 <div className="stats-row">
                     <div className="glass stat-card stat-purple"><div className="stat-icon">👩</div><div className="stat-value">{stats.active}</div><div className="stat-label">Empleadas Activas</div></div>
-                    <div className="glass stat-card stat-amber"><div className="stat-icon">⏳</div><div className="stat-value">{stats.pending}</div><div className="stat-label">Pendientes</div></div>
+                    <div className="glass stat-card stat-amber" style={{ cursor: 'pointer', border: stats.pending > 0 ? '2px solid #F59E0B' : undefined }} onClick={() => navigate('/admin/solicitudes')}><div className="stat-icon">🔔</div><div className="stat-value">{stats.pending}</div><div className="stat-label">Pendientes</div></div>
                     <div className="glass stat-card stat-green"><div className="stat-icon">📋</div><div className="stat-value">{stats.services}</div><div className="stat-label">Servicios</div></div>
                     <div className="glass stat-card stat-blue"><div className="stat-icon">💰</div><div className="stat-value">RD${stats.income.toLocaleString()}</div><div className="stat-label">Ingresos</div></div>
                 </div>
