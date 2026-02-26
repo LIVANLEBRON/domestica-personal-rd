@@ -44,7 +44,11 @@ export default function Sidebar({ role }) {
             </nav>
             <div className="sidebar-footer">
                 <div className="user-info">
-                    <div className="user-avatar">{(userData?.nombre || 'U')[0].toUpperCase()}</div>
+                    {userData?.fotoURL ? (
+                        <img src={userData.fotoURL} alt="Avatar" className="user-avatar" style={{ border: 'none', objectFit: 'cover' }} />
+                    ) : (
+                        <div className="user-avatar">{(userData?.nombre || 'U')[0].toUpperCase()}</div>
+                    )}
                     <div className="user-details">
                         <div className="user-name">{userData?.nombre || 'Usuario'}</div>
                         <div className="user-role">{role === 'admin' ? 'Administrador' : 'Empleada'}</div>

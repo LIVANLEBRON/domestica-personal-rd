@@ -40,6 +40,7 @@ export function AuthProvider({ children }) {
             await setDoc(doc(db, 'usuarios', cred.user.uid), {
                 nombre: cred.user.displayName || '',
                 email: cred.user.email,
+                fotoURL: cred.user.photoURL || null,
                 rol: 'empleada',
                 estado: 'pendiente',
                 creadoEn: serverTimestamp()

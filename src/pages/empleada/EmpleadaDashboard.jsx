@@ -124,7 +124,11 @@ export default function EmpleadaDashboard() {
                 {statusBanner()}
 
                 <div className="empleada-header">
-                    <div className="empleada-avatar">{(userData?.nombre || 'E')[0].toUpperCase()}</div>
+                    {userData?.fotoURL ? (
+                        <img src={userData.fotoURL} alt="Avatar" className="empleada-avatar" style={{ border: 'none', objectFit: 'cover' }} />
+                    ) : (
+                        <div className="empleada-avatar">{(userData?.nombre || 'E')[0].toUpperCase()}</div>
+                    )}
                     <div>
                         <h3>{userData?.nombre || 'Empleada'}</h3>
                         <div className="text-sm text-muted">{userData?.email}</div>
