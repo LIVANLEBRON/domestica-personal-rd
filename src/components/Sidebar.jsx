@@ -1,7 +1,7 @@
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 
-export default function Sidebar({ role }) {
+export default function Sidebar({ role, isOpen }) {
     const { userData, logout } = useAuth();
     const navigate = useNavigate();
 
@@ -30,7 +30,7 @@ export default function Sidebar({ role }) {
     const links = role === 'admin' ? adminLinks : empLinks;
 
     return (
-        <aside className="sidebar" id="sidebar">
+        <aside className={`sidebar ${isOpen ? 'open' : ''}`} id="sidebar">
             <div className="sidebar-logo">
                 <div className="logo-icon">🏠</div>
                 <div className="logo-text">Doméstica<br /><span>Personal RD</span></div>

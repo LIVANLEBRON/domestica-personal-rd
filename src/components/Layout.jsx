@@ -28,9 +28,7 @@ export default function Layout({ role }) {
             <button className="mobile-toggle" onClick={() => setOpen(!open)}>☰</button>
             {open && <div className="sidebar-overlay show" onClick={() => setOpen(false)} />}
             <div className="layout">
-                <div className={open ? 'sidebar open' : 'sidebar'}>
-                    <Sidebar role={role} />
-                </div>
+                <Sidebar role={role} isOpen={open} />
                 <main className="main-content">
                     <Outlet />
                 </main>
