@@ -18,7 +18,7 @@ export default function Register() {
     const [cedulaPreview, setCedulaPreview] = useState('');
     const [loading, setLoading] = useState(false);
     const fileRef = useRef();
-    const { register } = useAuth();
+    const { register, refreshUserData } = useAuth();
     const { showToast } = useToast();
     const navigate = useNavigate();
 
@@ -80,6 +80,8 @@ export default function Register() {
                 lat: location.lat, lng: location.lng,
                 creadoEn: serverTimestamp()
             });
+
+            await refreshUserData();
 
             showToast('¡Cuenta creada! Pendiente de aprobación.', 'success');
             setTimeout(() => navigate('/empleada'), 1500);

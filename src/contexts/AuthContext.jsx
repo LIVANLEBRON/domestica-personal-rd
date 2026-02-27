@@ -51,20 +51,25 @@ export function AuthProvider({ children }) {
         const cred = await signInWithPopup(auth, googleProvider);
         const snap = await getDoc(doc(db, 'usuarios', cred.user.uid));
         if (!snap.exists()) {
-            await setDoc(doc(db, 'usuarios', cred.user.uid), {
+            const newUser = {
                 nombre: cred.user.displayName || '',
                 email: cred.user.email,
                 fotoURL: cred.user.photoURL || null,
                 rol: 'empleada',
                 estado: 'pendiente',
                 creadoEn: serverTimestamp()
-            });
+            };
+            await setDoc(doc(db, 'usuarios', cred.user.uid), newUser);
+            setUserData(newUser);
         } else {
+            const existingData = snap.data();
+            setUserData(existingData); // Ensure state is populated if observer missed it
             // Update photo for existing users when they login with Google
-            if (cred.user.photoURL) {
+            if (cred.user.photoURL && existingData.fotoURL !== cred.user.photoURL) {
                 await setDoc(doc(db, 'usuarios', cred.user.uid), {
                     fotoURL: cred.user.photoURL
                 }, { merge: true });
+                setUserData(prev => prev ? { ...prev, fotoURL: cred.user.photoURL } : null);
             }
         }
         return cred;
