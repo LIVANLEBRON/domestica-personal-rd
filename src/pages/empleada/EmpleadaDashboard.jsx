@@ -143,12 +143,10 @@ export default function EmpleadaDashboard() {
                     <div className="glass stat-card stat-amber"><div className="stat-value">{totalHoras}h</div><div className="stat-label">Horas trabajadas</div></div>
                 </div>
 
-                {/* Tabs */}
                 <div className="tabs">
                     <button className={`tab-btn${tab === 'servicios' ? ' active' : ''}`} onClick={() => setTab('servicios')}>📋 Servicios ({activeServices.length})</button>
                     <button className={`tab-btn${tab === 'visitas' ? ' active' : ''}`} onClick={() => setTab('visitas')}>📅 Próximas Visitas ({pendingVisits.length})</button>
                     <button className={`tab-btn${tab === 'historial' ? ' active' : ''}`} onClick={() => setTab('historial')}>✅ Historial ({completedServices.length})</button>
-                    <button className={`tab-btn${tab === 'pagos' ? ' active' : ''}`} onClick={() => setTab('pagos')}>💰 Mis Pagos</button>
                 </div>
 
                 {/* TAB: SERVICIOS (with detail + progress) */}
@@ -169,7 +167,6 @@ export default function EmpleadaDashboard() {
                                                 <h4 style={{ margin: 0 }}>{s.clienteNombre}</h4>
                                                 <div className="text-sm text-muted">📌 {s.tipoServicio} • 📍 {s.clienteDireccion || '—'} • 📞 {s.clienteTelefono || '—'}</div>
                                             </div>
-                                            <span style={{ fontWeight: 800, fontSize: 16, color: 'var(--primary-light)' }}>RD${(s.precioTotal || s.precio)?.toLocaleString()}</span>
                                         </div>
 
                                         {/* Service details grid */}
@@ -234,7 +231,7 @@ export default function EmpleadaDashboard() {
                                                                 <span style={{ fontSize: 11, color: 'var(--text-muted)' }}>{fechaStr}</span>
                                                             </div>
                                                             <div style={{ fontSize: 11, color: 'var(--text-muted)', marginTop: 4 }}>
-                                                                ⏱️ {v.horasPorVisita}h • 💰 RD${(v.precioPorVisita || 0).toLocaleString()}
+                                                                ⏱️ {v.horasPorVisita}h
                                                             </div>
                                                             {v.estado === 'pendiente' && (
                                                                 <button className="btn btn-success btn-sm" style={{ marginTop: 8, width: '100%' }} onClick={(e) => { e.stopPropagation(); completeVisit(v); }}>
@@ -276,7 +273,6 @@ export default function EmpleadaDashboard() {
                                             </div>
                                         </div>
                                         <div className="flex gap-2" style={{ alignItems: 'center' }}>
-                                            <span style={{ fontWeight: 700, color: 'var(--primary-light)' }}>RD${(v.precioPorVisita || 0).toLocaleString()}</span>
                                             <button className="btn btn-success btn-sm" onClick={() => completeVisit(v)}>✅ Completar</button>
                                         </div>
                                     </div>
@@ -304,7 +300,6 @@ export default function EmpleadaDashboard() {
                                                 <span>⏱️ {s.totalHoras}h total</span>
                                             </div>
                                         </div>
-                                        <span className="service-price">RD${(s.precioTotal || s.precio)?.toLocaleString()}</span>
                                     </div>
                                 );
                             })}
@@ -312,24 +307,6 @@ export default function EmpleadaDashboard() {
                     </div>
                 )}
 
-                {/* TAB: PAGOS */}
-                {tab === 'pagos' && (
-                    <div className="panel-section">
-                        <div className="panel-section-body no-pad">
-                            {payments.length === 0 ? (
-                                <div className="empty-state"><div className="empty-icon">💰</div><h3>Sin pagos</h3><p>No tienes pagos registrados</p></div>
-                            ) : payments.map(p => (
-                                <div key={p.id} className="payment-item">
-                                    <div>
-                                        <strong>{p.clienteNombre}</strong>
-                                        <div className="payment-date">RD${p.pagoEmpleada?.toLocaleString()} de RD${p.montoTotal?.toLocaleString()}</div>
-                                    </div>
-                                    <span className="payment-amount">RD${p.pagoEmpleada?.toLocaleString()}</span>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                )}
             </div>
         </>
     );
